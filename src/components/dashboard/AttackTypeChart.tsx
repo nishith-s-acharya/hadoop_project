@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { ThreatStats } from "@/lib/mock-data";
+import { ThreatStats } from "@/hooks/useThreatLogs";
 
 interface AttackTypeChartProps {
   stats: ThreatStats;

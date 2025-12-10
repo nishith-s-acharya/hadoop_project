@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ThreatLog as ThreatLogType } from "@/lib/mock-data";
+import { ThreatLog } from "@/hooks/useThreatLogs";
 import { cn } from "@/lib/utils";
 import { 
   ShieldAlert, 
@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 
 interface ThreatLogProps {
-  logs: ThreatLogType[];
+  logs: ThreatLog[];
 }
 
-const typeIcons = {
+const typeIcons: Record<string, typeof KeyRound> = {
   failed_login: KeyRound,
   port_scan: Scan,
   brute_force: ShieldAlert,
@@ -24,7 +24,7 @@ const typeIcons = {
   ddos: Zap,
 };
 
-const typeLabels = {
+const typeLabels: Record<string, string> = {
   failed_login: 'Failed Login',
   port_scan: 'Port Scan',
   brute_force: 'Brute Force',
@@ -55,76 +55,89 @@ export function ThreatLogViewer({ logs }: ThreatLogProps) {
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-3">
-            {logs.map((log, index) => {
-              const Icon = typeIcons[log.type];
-              return (
-                <div
-                  key={log.id}
-                  className={cn(
-                    "group relative flex items-start gap-4 p-4 rounded-lg border transition-all duration-300",
-                    "bg-secondary/30 border-border/50 hover:border-primary/30 hover:bg-secondary/50",
-                    "animate-fade-in"
-                  )}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <div className={cn(
-                    "flex-shrink-0 p-2 rounded-lg",
-                    log.severity === 'critical' && "bg-destructive/20 text-destructive",
-                    log.severity === 'high' && "bg-warning/20 text-warning",
-                    log.severity === 'medium' && "bg-warning/10 text-warning/80",
-                    log.severity === 'low' && "bg-primary/20 text-primary",
-                  )}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0 space-y-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge variant={severityVariants[log.severity]} className="uppercase text-[10px]">
-                        {log.severity}
-                      </Badge>
-                      <Badge variant="outline" className="font-mono text-[10px]">
-                        {typeLabels[log.type]}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground font-mono">
-                        {log.timestamp.toLocaleTimeString()}
-                      </span>
+          {logs.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+              <ShieldAlert className="h-12 w-12 mb-4 opacity-50" />
+              <p className="font-mono text-sm">No threats detected</p>
+              <p className="text-xs mt-1">System monitoring active</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {logs.map((log, index) => {
+                const Icon = typeIcons[log.threat_type] || ShieldAlert;
+                const timestamp = new Date(log.timestamp);
+                return (
+                  <div
+                    key={log.id}
+                    className={cn(
+                      "group relative flex items-start gap-4 p-4 rounded-lg border transition-all duration-300",
+                      "bg-secondary/30 border-border/50 hover:border-primary/30 hover:bg-secondary/50",
+                      "animate-fade-in"
+                    )}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div className={cn(
+                      "flex-shrink-0 p-2 rounded-lg",
+                      log.severity === 'critical' && "bg-destructive/20 text-destructive",
+                      log.severity === 'high' && "bg-warning/20 text-warning",
+                      log.severity === 'medium' && "bg-warning/10 text-warning/80",
+                      log.severity === 'low' && "bg-primary/20 text-primary",
+                    )}>
+                      <Icon className="h-5 w-5" />
                     </div>
                     
-                    <p className="text-sm text-foreground font-medium">
-                      {log.details}
-                    </p>
-                    
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
-                      <span className="flex items-center gap-1">
-                        <span className="text-primary">SRC:</span> {log.sourceIP}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="text-primary">DST:</span> {log.targetIP}
-                      </span>
-                      {log.port && (
-                        <span className="flex items-center gap-1">
-                          <span className="text-primary">PORT:</span> {log.port}
+                    <div className="flex-1 min-w-0 space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant={severityVariants[log.severity]} className="uppercase text-[10px]">
+                          {log.severity}
+                        </Badge>
+                        <Badge variant="outline" className="font-mono text-[10px]">
+                          {typeLabels[log.threat_type] || log.threat_type}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {timestamp.toLocaleTimeString()}
                         </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Globe className="h-3 w-3" /> {log.country}
-                      </span>
+                      </div>
+                      
+                      <p className="text-sm text-foreground font-medium">
+                        {log.description}
+                      </p>
+                      
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
+                        <span className="flex items-center gap-1">
+                          <span className="text-primary">SRC:</span> {log.source_ip}
+                        </span>
+                        {log.destination_ip && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-primary">DST:</span> {log.destination_ip}
+                          </span>
+                        )}
+                        {log.port && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-primary">PORT:</span> {log.port}
+                          </span>
+                        )}
+                        {log.location && (
+                          <span className="flex items-center gap-1">
+                            <Globe className="h-3 w-3" /> {log.location}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    
+                    {/* Severity indicator line */}
+                    <div className={cn(
+                      "absolute left-0 top-0 bottom-0 w-1 rounded-l-lg",
+                      log.severity === 'critical' && "bg-destructive",
+                      log.severity === 'high' && "bg-warning",
+                      log.severity === 'medium' && "bg-warning/60",
+                      log.severity === 'low' && "bg-primary/60",
+                    )} />
                   </div>
-                  
-                  {/* Severity indicator line */}
-                  <div className={cn(
-                    "absolute left-0 top-0 bottom-0 w-1 rounded-l-lg",
-                    log.severity === 'critical' && "bg-destructive",
-                    log.severity === 'high' && "bg-warning",
-                    log.severity === 'medium' && "bg-warning/60",
-                    log.severity === 'low' && "bg-primary/60",
-                  )} />
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </ScrollArea>
       </CardContent>
     </Card>
