@@ -1,16 +1,10 @@
-import { useMemo, useState, useEffect } from "react";
 import { Header } from "@/components/dashboard/Header";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ThreatChart } from "@/components/dashboard/ThreatChart";
 import { ThreatLogViewer } from "@/components/dashboard/ThreatLog";
 import { GeoAttackMap } from "@/components/dashboard/GeoAttackMap";
 import { AttackTypeChart } from "@/components/dashboard/AttackTypeChart";
-import { 
-  generateThreatLogs, 
-  generateThreatStats,
-  ThreatLog,
-  ThreatStats 
-} from "@/lib/mock-data";
+import { useThreatLogs } from "@/hooks/useThreatLogs";
 import { 
   ShieldAlert, 
   Scan, 
@@ -21,26 +15,17 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const [logs, setLogs] = useState<ThreatLog[]>([]);
-  const [stats, setStats] = useState<ThreatStats | null>(null);
+  const { logs, stats, loading } = useThreatLogs();
 
-  useEffect(() => {
-    // Initial load
-    setLogs(generateThreatLogs(25));
-    setStats(generateThreatStats());
-
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      setLogs(prev => {
-        const newLog = generateThreatLogs(1)[0];
-        return [newLog, ...prev.slice(0, 24)];
-      });
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!stats) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background cyber-grid flex items-center justify-center">
+        <div className="text-primary animate-pulse font-mono text-xl">
+          INITIALIZING SENTINEL...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background cyber-grid relative">
@@ -119,7 +104,7 @@ const Index = () => {
         {/* Footer */}
         <footer className="text-center py-6 border-t border-border/30">
           <p className="text-xs text-muted-foreground font-mono">
-            SENTINEL v2.0.1 • Hadoop Cluster: 3 nodes • Last sync: {new Date().toLocaleTimeString()}
+            SENTINEL v2.0.1 • Lovable Cloud Connected • Last sync: {new Date().toLocaleTimeString()}
           </p>
         </footer>
       </main>

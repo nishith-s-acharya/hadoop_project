@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      threat_logs: {
+        Row: {
+          country_code: string | null
+          created_at: string
+          description: string
+          destination_ip: string | null
+          id: string
+          location: string | null
+          port: number | null
+          protocol: string | null
+          raw_log: string | null
+          severity: string
+          source_ip: string
+          status: string
+          threat_type: string
+          timestamp: string
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string
+          description: string
+          destination_ip?: string | null
+          id?: string
+          location?: string | null
+          port?: number | null
+          protocol?: string | null
+          raw_log?: string | null
+          severity: string
+          source_ip: string
+          status?: string
+          threat_type: string
+          timestamp?: string
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string
+          description?: string
+          destination_ip?: string | null
+          id?: string
+          location?: string | null
+          port?: number | null
+          protocol?: string | null
+          raw_log?: string | null
+          severity?: string
+          source_ip?: string
+          status?: string
+          threat_type?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
