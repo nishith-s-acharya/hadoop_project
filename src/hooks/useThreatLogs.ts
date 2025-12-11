@@ -16,6 +16,9 @@ export interface ThreatLog {
   status: string;
   raw_log: string | null;
   created_at: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  notes: string | null;
 }
 
 export interface ThreatStats {

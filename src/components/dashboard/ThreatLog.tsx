@@ -1,7 +1,10 @@
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThreatLog } from "@/hooks/useThreatLogs";
+import { ThreatFiltersComponent, ThreatFilters } from "./ThreatFilters";
+import { ThreatManagement } from "./ThreatManagement";
 import { cn } from "@/lib/utils";
 import { 
   ShieldAlert, 
@@ -14,6 +17,8 @@ import {
 
 interface ThreatLogProps {
   logs: ThreatLog[];
+  isAuthenticated?: boolean;
+  onRefetch?: () => void;
 }
 
 const typeIcons: Record<string, typeof KeyRound> = {
@@ -39,31 +44,84 @@ const severityVariants = {
   critical: 'critical',
 } as const;
 
-export function ThreatLogViewer({ logs }: ThreatLogProps) {
+export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogProps) {
+  const [filters, setFilters] = useState<ThreatFilters>({
+    search: '',
+    severity: [],
+    threatType: [],
+    dateFrom: undefined,
+    dateTo: undefined,
+  });
+
+  const filteredLogs = useMemo(() => {
+    return logs.filter(log => {
+      // Search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const matchesSearch = 
+          log.source_ip.toLowerCase().includes(searchLower) ||
+          (log.destination_ip?.toLowerCase().includes(searchLower)) ||
+          log.description.toLowerCase().includes(searchLower) ||
+          (log.location?.toLowerCase().includes(searchLower));
+        if (!matchesSearch) return false;
+      }
+
+      // Severity filter
+      if (filters.severity.length > 0 && !filters.severity.includes(log.severity)) {
+        return false;
+      }
+
+      // Threat type filter
+      if (filters.threatType.length > 0 && !filters.threatType.includes(log.threat_type)) {
+        return false;
+      }
+
+      // Date range filter
+      const logDate = new Date(log.timestamp);
+      if (filters.dateFrom && logDate < filters.dateFrom) {
+        return false;
+      }
+      if (filters.dateTo) {
+        const endOfDay = new Date(filters.dateTo);
+        endOfDay.setHours(23, 59, 59, 999);
+        if (logDate > endOfDay) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [logs, filters]);
+
   return (
     <Card variant="cyber" className="col-span-full">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-4 space-y-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-foreground">
             <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
             Real-Time Threat Feed
           </CardTitle>
           <Badge variant="info" className="font-mono">
-            {logs.length} events
+            {filteredLogs.length} / {logs.length} events
           </Badge>
         </div>
+        <ThreatFiltersComponent filters={filters} onFiltersChange={setFilters} />
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
-          {logs.length === 0 ? (
+          {filteredLogs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
               <ShieldAlert className="h-12 w-12 mb-4 opacity-50" />
-              <p className="font-mono text-sm">No threats detected</p>
-              <p className="text-xs mt-1">System monitoring active</p>
+              <p className="font-mono text-sm">
+                {logs.length === 0 ? 'No threats detected' : 'No matching threats'}
+              </p>
+              <p className="text-xs mt-1">
+                {logs.length === 0 ? 'System monitoring active' : 'Try adjusting your filters'}
+              </p>
             </div>
           ) : (
             <div className="space-y-3">
-              {logs.map((log, index) => {
+              {filteredLogs.map((log, index) => {
                 const Icon = typeIcons[log.threat_type] || ShieldAlert;
                 const timestamp = new Date(log.timestamp);
                 return (
@@ -72,7 +130,8 @@ export function ThreatLogViewer({ logs }: ThreatLogProps) {
                     className={cn(
                       "group relative flex items-start gap-4 p-4 rounded-lg border transition-all duration-300",
                       "bg-secondary/30 border-border/50 hover:border-primary/30 hover:bg-secondary/50",
-                      "animate-fade-in"
+                      "animate-fade-in",
+                      log.status === 'resolved' && "opacity-60"
                     )}
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
@@ -123,6 +182,13 @@ export function ThreatLogViewer({ logs }: ThreatLogProps) {
                           </span>
                         )}
                       </div>
+
+                      {/* Management controls for authenticated users */}
+                      {isAuthenticated && onRefetch && (
+                        <div className="pt-2 border-t border-border/30 mt-2">
+                          <ThreatManagement threat={log} onUpdate={onRefetch} />
+                        </div>
+                      )}
                     </div>
                     
                     {/* Severity indicator line */}
