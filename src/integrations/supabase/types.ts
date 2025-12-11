@@ -14,6 +14,88 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_notifications: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          notification_type: string
+          recipient: string
+          sent_at: string | null
+          status: string
+          threat_log_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type: string
+          recipient: string
+          sent_at?: string | null
+          status?: string
+          threat_log_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          recipient?: string
+          sent_at?: string | null
+          status?: string
+          threat_log_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_notifications_threat_log_id_fkey"
+            columns: ["threat_log_id"]
+            isOneToOne: false
+            referencedRelation: "threat_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blocked_ips: {
+        Row: {
+          blocked_at: string
+          blocked_by: string | null
+          expires_at: string | null
+          id: string
+          ip_address: string
+          is_permanent: boolean
+          reason: string
+          rule_id: string | null
+        }
+        Insert: {
+          blocked_at?: string
+          blocked_by?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address: string
+          is_permanent?: boolean
+          reason: string
+          rule_id?: string | null
+        }
+        Update: {
+          blocked_at?: string
+          blocked_by?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: string
+          is_permanent?: boolean
+          reason?: string
+          rule_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_ips_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "response_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -38,6 +120,48 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      response_rules: {
+        Row: {
+          action_config: Json | null
+          action_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          trigger_type: string
+          trigger_value: string
+          updated_at: string
+        }
+        Insert: {
+          action_config?: Json | null
+          action_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          trigger_type: string
+          trigger_value: string
+          updated_at?: string
+        }
+        Update: {
+          action_config?: Json | null
+          action_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          trigger_type?: string
+          trigger_value?: string
+          updated_at?: string
         }
         Relationships: []
       }
