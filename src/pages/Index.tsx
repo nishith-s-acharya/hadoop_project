@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Header } from "@/components/dashboard/Header";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ThreatChart } from "@/components/dashboard/ThreatChart";
@@ -5,6 +6,9 @@ import { ThreatLogViewer } from "@/components/dashboard/ThreatLog";
 import { GeoAttackMap } from "@/components/dashboard/GeoAttackMap";
 import { AttackTypeChart } from "@/components/dashboard/AttackTypeChart";
 import { useThreatLogs } from "@/hooks/useThreatLogs";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { 
   ShieldAlert, 
   Scan, 
@@ -15,9 +19,37 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const { logs, stats, loading } = useThreatLogs();
+  const { logs, stats, loading, refetch } = useThreatLogs();
+  const { user, signOut, loading: authLoading } = useAuth();
+  const [isSimulating, setIsSimulating] = useState(false);
 
-  if (loading) {
+  const handleSimulate = async () => {
+    setIsSimulating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('simulate-threats', {
+        body: { count: 3 },
+      });
+
+      if (error) throw error;
+      toast.success(`Generated ${data.count} simulated threats`);
+    } catch (error) {
+      console.error('Simulation error:', error);
+      toast.error('Failed to simulate threats');
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast.error('Failed to sign out');
+    } else {
+      toast.success('Signed out successfully');
+    }
+  };
+
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-background cyber-grid flex items-center justify-center">
         <div className="text-primary animate-pulse font-mono text-xl">
@@ -32,7 +64,13 @@ const Index = () => {
       {/* Scanline overlay */}
       <div className="fixed inset-0 pointer-events-none scanlines opacity-30" />
       
-      <Header criticalAlerts={stats.criticalAlerts} />
+      <Header 
+        criticalAlerts={stats.criticalAlerts} 
+        user={user}
+        onSignOut={handleSignOut}
+        onSimulate={handleSimulate}
+        isSimulating={isSimulating}
+      />
       
       <main className="container mx-auto px-6 py-8 space-y-8">
         {/* Stats Grid */}
@@ -65,7 +103,7 @@ const Index = () => {
             title="Port Scans"
             value={stats.portScans}
             change="-3% from avg"
-            changeType="decrease"
+            changeType="increase"
             icon={Scan}
             variant="default"
           />
@@ -96,7 +134,11 @@ const Index = () => {
         {/* Bottom Row */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <ThreatLogViewer logs={logs} />
+            <ThreatLogViewer 
+              logs={logs} 
+              isAuthenticated={!!user}
+              onRefetch={refetch}
+            />
           </div>
           <GeoAttackMap />
         </section>
