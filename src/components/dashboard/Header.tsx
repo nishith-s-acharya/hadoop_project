@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { MobileNav } from "./MobileNav";
+import { ClusterStatus } from "./ClusterStatus";
 
 interface HeaderProps {
   criticalAlerts: number;
@@ -24,25 +26,33 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
 
   return (
     <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4">
+      <div className="container mx-auto px-4 md:px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* Mobile Menu */}
+            <MobileNav 
+              user={user} 
+              onSignOut={onSignOut} 
+              onSimulate={onSimulate}
+              isSimulating={isSimulating}
+            />
+
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
               <div className="relative">
-                <Shield className="h-8 w-8 text-primary" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-success animate-pulse" />
+                <Shield className="h-7 w-7 md:h-8 md:w-8 text-primary" />
+                <span className="absolute -top-1 -right-1 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-success animate-pulse" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground tracking-tight">
+              <div className="hidden sm:block">
+                <h1 className="text-lg md:text-xl font-bold text-foreground tracking-tight">
                   SENTINEL
                 </h1>
-                <p className="text-xs text-muted-foreground font-mono">
+                <p className="text-[10px] md:text-xs text-muted-foreground font-mono">
                   Threat Intelligence Platform
                 </p>
               </div>
             </div>
 
-            {/* Navigation */}
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -65,10 +75,8 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
               })}
             </nav>
             
-            <Badge variant="info" className="hidden lg:flex items-center gap-1 font-mono">
-              <Activity className="h-3 w-3" />
-              HADOOP CLUSTER: ONLINE
-            </Badge>
+            {/* Interactive Cluster Status */}
+            <ClusterStatus />
           </div>
           
           <div className="flex items-center gap-3">

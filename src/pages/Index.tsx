@@ -5,6 +5,7 @@ import { ThreatChart } from "@/components/dashboard/ThreatChart";
 import { ThreatLogViewer } from "@/components/dashboard/ThreatLog";
 import { GeoAttackMap } from "@/components/dashboard/GeoAttackMap";
 import { AttackTypeChart } from "@/components/dashboard/AttackTypeChart";
+import { SecuritySummaryWidget } from "@/components/dashboard/SecuritySummaryWidget";
 import { useThreatLogs } from "@/hooks/useThreatLogs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,7 +133,7 @@ const Index = () => {
         </section>
 
         {/* Bottom Row */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-2">
             <ThreatLogViewer 
               logs={logs} 
@@ -141,6 +142,7 @@ const Index = () => {
             />
           </div>
           <GeoAttackMap />
+          <SecuritySummaryWidget />
         </section>
 
         {/* Footer */}
