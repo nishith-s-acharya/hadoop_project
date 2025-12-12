@@ -53,18 +53,16 @@ const Index = () => {
 
   if (loading || authLoading) {
     return (
-      <div className="min-h-screen bg-background cyber-grid flex items-center justify-center">
-        <div className="text-primary animate-pulse font-mono text-xl">
-          INITIALIZING SENTINEL...
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-primary animate-pulse font-medium text-lg">
+          Loading Sentinel...
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background cyber-grid relative">
-      {/* Scanline overlay */}
-      <div className="fixed inset-0 pointer-events-none scanlines opacity-30" />
+    <div className="min-h-screen bg-background relative">
 
       <Header
         criticalAlerts={stats.criticalAlerts}
@@ -148,7 +146,7 @@ const Index = () => {
 
         {/* Footer */}
         <footer className="text-center py-6 border-t border-border/30">
-          <p className="text-xs text-muted-foreground font-mono">
+          <p className="text-xs text-muted-foreground">
             SENTINEL v2.0.1 • Lovable Cloud Connected • Last sync: {new Date().toLocaleTimeString()}
           </p>
         </footer>

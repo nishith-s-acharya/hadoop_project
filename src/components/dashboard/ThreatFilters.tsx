@@ -57,10 +57,10 @@ export function ThreatFiltersComponent({ filters, onFiltersChange }: ThreatFilte
     });
   };
 
-  const activeFilterCount = 
-    filters.severity.length + 
-    filters.threatType.length + 
-    (filters.dateFrom ? 1 : 0) + 
+  const activeFilterCount =
+    filters.severity.length +
+    filters.threatType.length +
+    (filters.dateFrom ? 1 : 0) +
     (filters.dateTo ? 1 : 0);
 
   return (
@@ -96,7 +96,7 @@ export function ThreatFiltersComponent({ filters, onFiltersChange }: ThreatFilte
         <div className="p-4 rounded-lg bg-secondary/30 border border-border/50 space-y-4 animate-fade-in">
           {/* Severity */}
           <div className="space-y-2">
-            <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Severity</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Severity</label>
             <div className="flex flex-wrap gap-2">
               {severityOptions.map((severity) => (
                 <Badge
@@ -104,7 +104,7 @@ export function ThreatFiltersComponent({ filters, onFiltersChange }: ThreatFilte
                   variant={filters.severity.includes(severity) ? 'default' : 'outline'}
                   className={cn(
                     "cursor-pointer uppercase text-[10px] transition-all",
-                    filters.severity.includes(severity) && "cyber-glow"
+                    filters.severity.includes(severity) && "bg-primary text-primary-foreground"
                   )}
                   onClick={() => toggleSeverity(severity)}
                 >
@@ -116,7 +116,7 @@ export function ThreatFiltersComponent({ filters, onFiltersChange }: ThreatFilte
 
           {/* Threat Type */}
           <div className="space-y-2">
-            <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Threat Type</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Threat Type</label>
             <div className="flex flex-wrap gap-2">
               {threatTypeOptions.map((type) => (
                 <Badge
@@ -124,7 +124,7 @@ export function ThreatFiltersComponent({ filters, onFiltersChange }: ThreatFilte
                   variant={filters.threatType.includes(type.value) ? 'default' : 'outline'}
                   className={cn(
                     "cursor-pointer text-[10px] transition-all",
-                    filters.threatType.includes(type.value) && "cyber-glow"
+                    filters.threatType.includes(type.value) && "bg-primary text-primary-foreground"
                   )}
                   onClick={() => toggleThreatType(type.value)}
                 >

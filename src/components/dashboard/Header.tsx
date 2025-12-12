@@ -53,7 +53,7 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                 <h1 className="text-lg md:text-xl font-bold text-foreground tracking-tight">
                   SENTINEL
                 </h1>
-                <p className="text-[10px] md:text-xs text-muted-foreground font-mono">
+                <p className="text-xs text-muted-foreground">
                   Threat Intelligence Platform
                 </p>
               </div>
@@ -71,7 +71,7 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                     size="sm"
                     onClick={() => navigate(item.path)}
                     className={cn(
-                      "font-mono text-xs gap-2",
+                      "text-sm font-medium gap-2",
                       isActive && "bg-primary/10 text-primary"
                     )}
                   >
@@ -94,7 +94,7 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                 size="sm"
                 onClick={() => setShowSimulation(true)}
                 disabled={isSimulating}
-                className="hidden sm:flex font-mono text-xs gap-2 border-primary/50 text-primary hover:bg-primary/10"
+                className="hidden sm:flex text-sm gap-2 border-primary/50 text-primary hover:bg-primary/10"
               >
                 <Zap className={`h-4 w-4 ${isSimulating ? 'animate-pulse' : ''}`} />
                 {isSimulating ? 'Generating...' : 'Simulate Attack'}
@@ -128,7 +128,7 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
             {/* Auth buttons */}
             {user ? (
               <div className="flex items-center gap-2">
-                <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground font-mono">
+                <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   {user.email?.split('@')[0]}
                 </div>
@@ -136,7 +136,7 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                   variant="ghost"
                   size="sm"
                   onClick={onSignOut}
-                  className="font-mono text-xs"
+                  className="text-sm"
                 >
                   <LogOut className="h-4 w-4 mr-1" />
                   Logout
@@ -147,7 +147,7 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                 variant="default"
                 size="sm"
                 onClick={() => navigate('/auth')}
-                className="font-mono text-xs"
+                className="text-sm"
               >
                 <LogIn className="h-4 w-4 mr-1" />
                 Login

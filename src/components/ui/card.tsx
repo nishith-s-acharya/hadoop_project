@@ -9,7 +9,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: "bg-card border-border",
-        cyber: "bg-card/80 border-primary/20 backdrop-blur-sm shadow-[0_0_20px_hsl(174_100%_50%_/_0.1)] hover:border-primary/40",
+
         alert: "bg-card/80 border-destructive/30 backdrop-blur-sm shadow-[0_0_20px_hsl(0_85%_55%_/_0.15)]",
         success: "bg-card/80 border-success/30 backdrop-blur-sm",
         glass: "bg-card/40 border-border/50 backdrop-blur-md",
@@ -23,7 +23,7 @@ const cardVariants = cva(
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
+  VariantProps<typeof cardVariants> { }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, ...props }, ref) => (

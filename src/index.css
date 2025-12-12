@@ -6,76 +6,79 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 180 100% 95%;
+    /* Professional Light Theme (Slate & Blue) */
+    --background: 0 0% 100%;       /* White */
+    --foreground: 222.2 84% 4.9%;  /* Slate-950 */
 
-    --card: 222 47% 8%;
-    --card-foreground: 180 100% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 180 100% 95%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 174 100% 50%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 221.2 83.2% 53.3%;  /* Blue-600 */
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 222 30% 15%;
-    --secondary-foreground: 180 100% 90%;
+    --secondary: 210 40% 96.1%;    /* Slate-100 */
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 222 30% 12%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 140 100% 50%;
-    --accent-foreground: 222 47% 6%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 85% 55%;
-    --destructive-foreground: 0 0% 100%;
-
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --success: 142.1 76.2% 36.3%; /* Green-600 */
+    --success-foreground: 355.7 100% 97.3%;
+    
     --warning: 38 92% 50%;
-    --warning-foreground: 222 47% 6%;
+    --warning-foreground: 48 96% 89%;
 
-    --success: 142 76% 45%;
-    --success-foreground: 222 47% 6%;
-
-    --border: 222 30% 18%;
-    --input: 222 30% 15%;
-    --ring: 174 100% 50%;
+    --border: 214.3 31.8% 91.4%;   /* Slate-200 */
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
 
     --radius: 0.5rem;
 
-    --chart-1: 174 100% 50%;
-    --chart-2: 140 100% 50%;
-    --chart-3: 0 85% 55%;
-    --chart-4: 38 92% 50%;
-    --chart-5: 262 83% 58%;
-
-    /* Custom cyber design tokens */
-    --glow-primary: 0 0 20px hsl(174 100% 50% / 0.4);
-    --glow-accent: 0 0 20px hsl(140 100% 50% / 0.4);
-    --glow-destructive: 0 0 20px hsl(0 85% 55% / 0.4);
-    --grid-color: hsl(174 100% 50% / 0.05);
-    --scanline-color: hsl(174 100% 50% / 0.03);
+    --chart-1: 221.2 83.2% 53.3%; /* Blue */
+    --chart-2: 142.1 76.2% 36.3%; /* Green */
+    --chart-3: 199 89% 48%;       /* Cyan */
+    --chart-4: 47 95% 49%;        /* Yellow */
+    --chart-5: 262 83% 58%;       /* Purple */
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 180 100% 95%;
-    --card: 222 47% 8%;
-    --card-foreground: 180 100% 95%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 180 100% 95%;
-    --primary: 174 100% 50%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 222 30% 15%;
-    --secondary-foreground: 180 100% 90%;
-    --muted: 222 30% 12%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 140 100% 50%;
-    --accent-foreground: 222 47% 6%;
-    --destructive: 0 85% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 222 30% 18%;
-    --input: 222 30% 15%;
-    --ring: 174 100% 50%;
+    /* Professional Dark Theme (Slate) */
+    --background: 222.2 84% 4.9%;  /* Slate-950 */
+    --foreground: 210 40% 98%;     /* Slate-50 */
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;  /* Blue-500 */
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%; /* Slate-800 */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
 }
 
@@ -92,84 +95,11 @@
   .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
-}
-
-@layer utilities {
-  .cyber-grid {
-    background-image: 
-      linear-gradient(var(--grid-color) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .cyber-glow {
-    box-shadow: var(--glow-primary);
-  }
-
-  .cyber-glow-accent {
-    box-shadow: var(--glow-accent);
-  }
-
-  .cyber-glow-destructive {
-    box-shadow: var(--glow-destructive);
-  }
-
-  .scanlines::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      var(--scanline-color) 2px,
-      var(--scanline-color) 4px
-    );
-    pointer-events: none;
-  }
-
-  .text-glow {
-    text-shadow: 0 0 10px currentColor;
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  .animate-flicker {
-    animation: flicker 3s linear infinite;
-  }
-
-  .animate-scan {
-    animation: scan 8s linear infinite;
+  
+  /* Make sure headings are clean */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
   }
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 1;
-    filter: brightness(1);
-  }
-  50% {
-    opacity: 0.8;
-    filter: brightness(1.2);
-  }
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  92% { opacity: 1; }
-  93% { opacity: 0.8; }
-  94% { opacity: 1; }
-  96% { opacity: 0.9; }
-  97% { opacity: 1; }
-}
-
-@keyframes scan {
-  0% {
-    background-position: 0 -100%;
-  }
-  100% {
-    background-position: 0 100%;
-  }
-}
+/* Removed cyber-grid, scans, etc. for cleaner look */

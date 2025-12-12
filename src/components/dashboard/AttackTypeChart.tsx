@@ -4,18 +4,23 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThreatStats } from "@/hooks/useThreatLogs";
+import { Shield } from "lucide-react";
 
 interface AttackTypeChartProps {
   stats: ThreatStats;
 }
 
-const COLORS = ['hsl(174, 100%, 50%)', 'hsl(38, 92%, 50%)', 'hsl(0, 85%, 55%)', 'hsl(262, 83%, 58%)', 'hsl(140, 100%, 50%)'];
+// Professional corporate palette (Blues, Teals, Indigos)
+const COLORS = ['#2563eb', '#0d9488', '#4f46e5', '#ca8a04', '#059669', '#dc2626'];
 
 const renderActiveShape = (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
 
   return (
     <g>
+      <text x={cx} y={cy} dy={8} textAnchor="middle" fill="#334155" className="text-xl font-bold">
+        {payload.count}
+      </text>
       <Sector
         cx={cx}
         cy={cy}
@@ -32,31 +37,25 @@ const renderActiveShape = (props: any) => {
         cy={cy}
         startAngle={startAngle}
         endAngle={endAngle}
-        innerRadius={innerRadius - 4}
-        outerRadius={outerRadius + 12}
+        innerRadius={innerRadius - 6}
+        outerRadius={outerRadius + 10}
         fill={fill}
         opacity={0.15}
       />
-      <text x={cx} y={cy - 10} dy={8} textAnchor="middle" fill="#ffffff" className="text-xl font-bold font-mono">
-        {payload.name}
-      </text>
-      <text x={cx} y={cy + 15} dy={8} textAnchor="middle" fill="#cccccc" className="text-sm font-mono">
-        {`${(percent * 100).toFixed(0)}% (${value})`}
-      </text>
     </g>
   );
 };
 
-export function AttackTypeChart({ stats }: AttackTypeChartProps) {
+export const AttackTypeChart = ({ stats }: AttackTypeChartProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const data = [
-    { name: 'Failed Logins', value: stats.failedLogins, threat_type: 'Failed Logins' },
-    { name: 'Port Scans', value: stats.portScans, threat_type: 'Port Scans' },
-    { name: 'Brute Force', value: stats.bruteForceAttempts, threat_type: 'Brute Force' },
-    { name: 'Malware', value: stats.malwareDetected, threat_type: 'Malware' },
-    { name: 'DDoS', value: stats.ddosAttacks, threat_type: 'DDoS' },
-  ];
+    { name: 'Failed Logins', value: stats.failedLogins },
+    { name: 'Port Scans', value: stats.portScans },
+    { name: 'Brute Force', value: stats.bruteForceAttempts },
+    { name: 'Malware', value: stats.malwareDetected },
+    { name: 'DDoS', value: stats.ddosAttacks || 0 }, // Ensure ddos exists or default to 0
+  ].filter(item => item.value > 0);
 
   const total = data.reduce((acc, curr) => acc + curr.value, 0) || 1;
   const dataWithPercentage = data.map(item => ({
@@ -69,17 +68,16 @@ export function AttackTypeChart({ stats }: AttackTypeChartProps) {
   };
 
   return (
-    <Card className="col-span-full lg:col-span-1 bg-black/40 border-white/10 backdrop-blur-md overflow-hidden h-full">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none" />
-      <CardHeader>
-        <CardTitle className="text-sm font-mono text-cyan-400 tracking-wider uppercase flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-cyan-400/50 animate-pulse" />
-          Live Attack Distribution
+    <Card className="h-full border-border bg-card shadow-sm">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-semibold text-foreground tracking-tight flex items-center gap-2">
+          <Shield className="h-4 w-4 text-primary" />
+          Attack Types
         </CardTitle>
       </CardHeader>
-      <CardContent className="relative z-10">
+      <CardContent>
         <div className="flex flex-col gap-6 items-center">
-          <div className="h-[250px] w-full relative">
+          <div className="h-[250px] w-full relative mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -95,11 +93,11 @@ export function AttackTypeChart({ stats }: AttackTypeChartProps) {
                   onMouseEnter={onPieEnter}
                   paddingAngle={2}
                 >
-                  {data.map((_, index) => (
+                  {dataWithPercentage.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}
-                      stroke="rgba(0,0,0,0.5)"
+                      stroke="transparent"
                       strokeWidth={2}
                     />
                   ))}
@@ -117,25 +115,25 @@ export function AttackTypeChart({ stats }: AttackTypeChartProps) {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                   className={`flex items-center justify-between p-2 rounded-lg border transition-all duration-200 cursor-pointer ${activeIndex === index
-                    ? "bg-white/10 border-white/20 shadow-lg scale-[1.02]"
-                    : "bg-transparent border-transparent hover:bg-white/5"
+                    ? "bg-secondary/50 border-primary/20 shadow-sm"
+                    : "bg-transparent border-transparent hover:bg-secondary/30"
                     }`}
                   onMouseEnter={() => setActiveIndex(index)}
                 >
                   <div className="flex items-center gap-2">
                     <div
-                      className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]"
-                      style={{ color: COLORS[index % COLORS.length], backgroundColor: COLORS[index % COLORS.length] }}
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
                     />
-                    <span className={`text-xs font-medium ${activeIndex === index ? 'text-white' : 'text-gray-400'}`}>
+                    <span className={`text-xs font-medium ${activeIndex === index ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {item.name}
                     </span>
                   </div>
                   <div className="text-right flex items-center gap-2">
-                    <span className="text-white font-mono font-bold text-xs">
+                    <span className="text-foreground font-semibold text-xs">
                       {item.percentage}%
                     </span>
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-muted-foreground">
                       ({item.value})
                     </span>
                   </div>
@@ -147,4 +145,4 @@ export function AttackTypeChart({ stats }: AttackTypeChartProps) {
       </CardContent>
     </Card>
   );
-}
+};

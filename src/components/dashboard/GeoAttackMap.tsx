@@ -9,7 +9,7 @@ export function GeoAttackMap() {
   const maxAttacks = Math.max(...geoData.map(d => d.attacks));
 
   return (
-    <Card variant="cyber" className="col-span-full lg:col-span-1">
+    <Card className="col-span-full lg:col-span-1 border bg-card/80 backdrop-blur-sm">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-foreground">
           <Globe className="h-5 w-5 text-primary" />
@@ -19,8 +19,8 @@ export function GeoAttackMap() {
       <CardContent>
         <div className="space-y-4">
           {geoData.slice(0, 8).map((item, index) => (
-            <div 
-              key={item.country} 
+            <div
+              key={item.country}
               className="space-y-2 animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -34,11 +34,11 @@ export function GeoAttackMap() {
                 </span>
               </div>
               <div className="relative">
-                <Progress 
-                  value={(item.attacks / maxAttacks) * 100} 
+                <Progress
+                  value={(item.attacks / maxAttacks) * 100}
                   className="h-2 bg-secondary"
                 />
-                <div 
+                <div
                   className="absolute inset-0 h-2 rounded-full opacity-50"
                   style={{
                     background: `linear-gradient(90deg, hsl(0, 85%, 55%) 0%, hsl(38, 92%, 50%) 100%)`,

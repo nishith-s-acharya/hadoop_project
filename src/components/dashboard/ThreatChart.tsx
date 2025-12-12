@@ -2,15 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { generateTimeSeriesData } from "@/lib/mock-data";
 import { useMemo } from "react";
+import { Activity } from "lucide-react";
 
 export function ThreatChart() {
   const data = useMemo(() => generateTimeSeriesData(), []);
 
   return (
-    <Card variant="cyber" className="col-span-full lg:col-span-2">
+    <Card className="col-span-full lg:col-span-2 border bg-card/80 backdrop-blur-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-foreground">
-          <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+        <CardTitle className="flex items-center gap-2 text-foreground font-semibold">
+          <Activity className="h-4 w-4 text-primary" />
           Threat Activity Timeline
         </CardTitle>
       </CardHeader>
@@ -20,52 +21,51 @@ export function ThreatChart() {
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="failedLogins" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(174, 100%, 50%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(174, 100%, 50%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2563eb" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="portScans" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#0d9488" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#0d9488" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="bruteForce" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(0, 85%, 55%)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="hsl(0, 85%, 55%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#dc2626" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="hsl(222, 30%, 18%)" 
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="hsl(var(--border))"
                 vertical={false}
               />
-              <XAxis 
-                dataKey="time" 
-                stroke="hsl(215, 20%, 55%)"
-                tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }}
-                axisLine={{ stroke: 'hsl(222, 30%, 18%)' }}
+              <XAxis
+                dataKey="time"
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fontSize: 11 }}
+                axisLine={{ stroke: 'hsl(var(--border))' }}
               />
-              <YAxis 
-                stroke="hsl(215, 20%, 55%)"
-                tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }}
-                axisLine={{ stroke: 'hsl(222, 30%, 18%)' }}
+              <YAxis
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fontSize: 11 }}
+                axisLine={{ stroke: 'hsl(var(--border))' }}
               />
-              <Tooltip 
+              <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(222, 47%, 8%)',
-                  border: '1px solid hsl(174, 100%, 50%, 0.3)',
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
-                  fontFamily: 'JetBrains Mono',
                   fontSize: '12px',
                 }}
-                labelStyle={{ color: 'hsl(180, 100%, 95%)' }}
+                labelStyle={{ color: 'hsl(var(--foreground))' }}
               />
-              <Legend 
-                wrapperStyle={{ fontFamily: 'JetBrains Mono', fontSize: '12px' }}
+              <Legend
+                wrapperStyle={{ fontSize: '12px' }}
               />
               <Area
                 type="monotone"
                 dataKey="failedLogins"
                 name="Failed Logins"
-                stroke="hsl(174, 100%, 50%)"
+                stroke="#2563eb"
                 strokeWidth={2}
                 fill="url(#failedLogins)"
               />
@@ -73,7 +73,7 @@ export function ThreatChart() {
                 type="monotone"
                 dataKey="portScans"
                 name="Port Scans"
-                stroke="hsl(38, 92%, 50%)"
+                stroke="#0d9488"
                 strokeWidth={2}
                 fill="url(#portScans)"
               />
@@ -81,7 +81,7 @@ export function ThreatChart() {
                 type="monotone"
                 dataKey="bruteForce"
                 name="Brute Force"
-                stroke="hsl(0, 85%, 55%)"
+                stroke="#dc2626"
                 strokeWidth={2}
                 fill="url(#bruteForce)"
               />

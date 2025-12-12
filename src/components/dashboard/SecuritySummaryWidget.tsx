@@ -83,7 +83,7 @@ export function SecuritySummaryWidget() {
 
   const getActionBadgeVariant = (actionType: string) => {
     switch (actionType) {
-      case 'block_ip': return 'critical';
+      case 'block_ip': return 'destructive';
       case 'escalate': return 'warning';
       case 'notify': return 'info';
       default: return 'outline';
@@ -92,9 +92,9 @@ export function SecuritySummaryWidget() {
 
   if (loading) {
     return (
-      <Card variant="cyber">
+      <Card className="border bg-card shadow-sm">
         <CardContent className="flex items-center justify-center h-48">
-          <div className="text-primary animate-pulse font-mono text-sm">
+          <div className="text-primary animate-pulse text-sm">
             Loading security data...
           </div>
         </CardContent>
@@ -103,7 +103,7 @@ export function SecuritySummaryWidget() {
   }
 
   return (
-    <Card variant="cyber">
+    <Card className="border bg-card shadow-sm">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-foreground text-base">
@@ -114,7 +114,7 @@ export function SecuritySummaryWidget() {
             variant="ghost"
             size="sm"
             onClick={() => navigate('/response-rules')}
-            className="font-mono text-xs gap-1 text-primary"
+            className="text-xs gap-1 text-primary"
           >
             View All
             <ArrowRight className="h-3 w-3" />
@@ -126,12 +126,12 @@ export function SecuritySummaryWidget() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <ShieldBan className="h-4 w-4 text-destructive" />
-            <span className="font-mono text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               BLOCKED IPs ({blockedIPs.length})
             </span>
           </div>
           {blockedIPs.length === 0 ? (
-            <div className="text-xs text-muted-foreground font-mono p-3 bg-secondary/30 rounded-lg text-center">
+            <div className="text-xs text-muted-foreground p-3 bg-secondary/30 rounded-lg text-center">
               No blocked IPs
             </div>
           ) : (
@@ -144,13 +144,13 @@ export function SecuritySummaryWidget() {
                   >
                     <div className="flex items-center gap-2">
                       <Ban className="h-3 w-3 text-destructive" />
-                      <span className="font-mono text-xs text-foreground">{ip.ip_address}</span>
+                      <span className="text-xs text-foreground">{ip.ip_address}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {ip.is_permanent ? (
-                        <Badge variant="critical" className="text-[10px]">PERMANENT</Badge>
+                        <Badge variant="destructive" className="text-[10px]">PERMANENT</Badge>
                       ) : ip.expires_at && (
-                        <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {formatDistanceToNow(new Date(ip.expires_at), { addSuffix: true })}
                         </span>
@@ -167,12 +167,12 @@ export function SecuritySummaryWidget() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <ShieldCheck className="h-4 w-4 text-success" />
-            <span className="font-mono text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               ACTIVE RULES ({rules.length})
             </span>
           </div>
           {rules.length === 0 ? (
-            <div className="text-xs text-muted-foreground font-mono p-3 bg-secondary/30 rounded-lg text-center">
+            <div className="text-xs text-muted-foreground p-3 bg-secondary/30 rounded-lg text-center">
               No active rules
             </div>
           ) : (
@@ -183,7 +183,7 @@ export function SecuritySummaryWidget() {
                     key={rule.id}
                     className="flex items-center justify-between p-2 bg-secondary/30 rounded-md border border-border/30"
                   >
-                    <span className="font-mono text-xs text-foreground truncate max-w-[150px]">
+                    <span className="text-xs text-foreground truncate max-w-[150px]">
                       {rule.name}
                     </span>
                     <Badge variant={getActionBadgeVariant(rule.action_type)} className="text-[10px]">

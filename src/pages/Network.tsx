@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+
+import { useState, useRef } from 'react';
 import { Header } from "@/components/dashboard/Header";
 import { useAuth } from "@/hooks/useAuth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,14 +18,12 @@ import {
     Database,
     Globe,
     Laptop,
-    ShieldAlert,
     Activity,
     Wifi,
     Plus,
     Trash2,
     RefreshCw,
-    X,
-    MousePointer2
+    ShieldAlert
 } from "lucide-react";
 
 // Types for our network graph
@@ -148,59 +147,58 @@ const Network = () => {
 
     const getNodeIcon = (type: string) => {
         switch (type) {
-            case 'server': return <Server className="h-6 w-6" />;
-            case 'database': return <Database className="h-6 w-6" />;
-            case 'workstation': return <Laptop className="h-6 w-6" />;
-            case 'external': return <Globe className="h-6 w-6" />;
-            default: return <Activity className="h-6 w-6" />;
+            case 'server': return <Server className="h-5 w-5" />;
+            case 'database': return <Database className="h-5 w-5" />;
+            case 'workstation': return <Laptop className="h-5 w-5" />;
+            case 'external': return <Globe className="h-5 w-5" />;
+            default: return <Activity className="h-5 w-5" />;
         }
     };
 
     const getNodeColor = (status: string) => {
         switch (status) {
-            case 'secure': return '#10b981'; // green-500
-            case 'warning': return '#f59e0b'; // amber-500
-            case 'compromised': return '#ef4444'; // red-500
-            default: return '#3b82f6'; // blue-500
+            case 'secure': return '#10b981'; // Green (Success)
+            case 'warning': return '#f59e0b'; // Amber (Warning)
+            case 'compromised': return '#ef4444'; // Red (Destructive)
+            default: return '#64748b'; // Slate (Neutral)
         }
     };
 
     if (authLoading) return null;
 
     return (
-        <div className="min-h-screen bg-background cyber-grid relative">
-            <div className="fixed inset-0 pointer-events-none scanlines opacity-30" />
+        <div className="min-h-screen bg-background relative">
             <Header criticalAlerts={0} user={user} onSignOut={handleSignOut} onSimulate={() => { }} isSimulating={false} />
 
             <main className="container mx-auto px-6 py-8">
                 <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-mono font-bold text-primary flex items-center gap-2">
-                            <Wifi className="h-6 w-6" /> NETWORK TOPOLOGY MAP
+                        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                            <Wifi className="h-6 w-6 text-primary" /> Network Topology Map
                         </h1>
-                        <Badge variant="outline" className="font-mono text-primary animate-pulse hidden sm:inline-flex">
-                            LIVE MONITORING
+                        <Badge variant="outline" className="hidden sm:inline-flex bg-green-500/10 text-green-600 border-green-200">
+                            Live Monitoring
                         </Badge>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="gap-2 font-mono bg-card/50 border-primary/20 hover:border-primary/50">
-                                    <Plus className="h-4 w-4" /> ADD NODE
+                                <Button variant="outline" className="gap-2">
+                                    <Plus className="h-4 w-4" /> Add Node
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="bg-card border-primary/20">
-                                <DropdownMenuItem onClick={() => handleAddNode('server')} className="font-mono cursor-pointer">
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleAddNode('server')} className="cursor-pointer">
                                     <Server className="mr-2 h-4 w-4" /> Server
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleAddNode('database')} className="font-mono cursor-pointer">
+                                <DropdownMenuItem onClick={() => handleAddNode('database')} className="cursor-pointer">
                                     <Database className="mr-2 h-4 w-4" /> Database
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleAddNode('workstation')} className="font-mono cursor-pointer">
+                                <DropdownMenuItem onClick={() => handleAddNode('workstation')} className="cursor-pointer">
                                     <Laptop className="mr-2 h-4 w-4" /> Workstation
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleAddNode('external')} className="font-mono cursor-pointer">
+                                <DropdownMenuItem onClick={() => handleAddNode('external')} className="cursor-pointer">
                                     <Globe className="mr-2 h-4 w-4" /> External Node
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -211,7 +209,7 @@ const Network = () => {
                             size="icon"
                             onClick={handleDeleteNode}
                             disabled={!selectedNodeId}
-                            className={`font-mono transition-opacity ${!selectedNodeId ? 'opacity-50' : ''}`}
+                            className={`transition-opacity ${!selectedNodeId ? 'opacity-50' : ''}`}
                             title="Delete Selected Node"
                         >
                             <Trash2 className="h-4 w-4" />
@@ -222,17 +220,16 @@ const Network = () => {
                             size="icon"
                             onClick={handleReset}
                             title="Reset Map Layout"
-                            className="font-mono bg-card/50 border-primary/20 hover:border-primary/50"
                         >
                             <RefreshCw className="h-4 w-4" />
                         </Button>
                     </div>
                 </div>
 
-                <Card className="bg-card/80 border-border backdrop-blur min-h-[600px] relative overflow-hidden select-none">
+                <Card className="bg-card border-border shadow-sm min-h-[600px] relative overflow-hidden select-none">
                     <CardContent
                         ref={containerRef}
-                        className="p-0 h-[600px] relative cursor-crosshair"
+                        className="p-0 h-[600px] relative cursor-default"
                         onMouseMove={handleMouseMove}
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseUp}
@@ -254,44 +251,42 @@ const Network = () => {
                                     orient="auto"
                                     markerUnits="strokeWidth"
                                 >
-                                    <path d="M0,0 L0,6 L9,3 z" fill="#4b5563" />
+                                    <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8" />
                                 </marker>
                             </defs>
                             {links.map((link, i) => {
                                 const source = nodes.find(n => n.id === link.source);
                                 const target = nodes.find(n => n.id === link.target);
 
-                                // Skip rendering links if connected nodes are missing
                                 if (!source || !target) return null;
 
                                 const isAttack = link.activity === 'high';
 
                                 return (
                                     <g key={i}>
-                                        {/* Base Line */}
                                         <line
                                             x1={source.x}
                                             y1={source.y}
                                             x2={target.x}
                                             y2={target.y}
-                                            stroke={isAttack ? '#ef4444' : '#4b5563'}
-                                            strokeWidth={isAttack ? 3 : 1}
-                                            strokeOpacity={0.4}
+                                            stroke={isAttack ? '#ef4444' : '#cbd5e1'}
+                                            strokeWidth={isAttack ? 2 : 1.5}
                                         />
-                                        {/* Animated Packet */}
-                                        <circle r="4" fill={isAttack ? '#ef4444' : '#3b82f6'}>
-                                            <animateMotion
-                                                dur={`${link.activity === 'high' ? '1s' : link.activity === 'medium' ? '2s' : '4s'}`}
-                                                repeatCount="indefinite"
-                                                path={`M${source.x},${source.y} L${target.x},${target.y}`}
-                                            />
-                                        </circle>
+                                        {isAttack && (
+                                            <circle r="3" fill="#ef4444">
+                                                <animateMotion
+                                                    dur="1s"
+                                                    repeatCount="indefinite"
+                                                    path={`M${source.x},${source.y} L${target.x},${target.y}`}
+                                                />
+                                            </circle>
+                                        )}
                                     </g>
                                 );
                             })}
                         </svg>
 
-                        {/* DOM Layer for Nodes (Interactive) */}
+                        {/* DOM Layer for Nodes */}
                         {nodes.map((node) => {
                             const isSelected = selectedNodeId === node.id;
                             const isDragging = draggingId === node.id;
@@ -299,36 +294,27 @@ const Network = () => {
                             return (
                                 <div
                                     key={node.id}
-                                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group cursor-grab active:cursor-grabbing ${isDragging ? 'z-50 scale-110' : 'z-10'}`}
+                                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group cursor-pointer ${isDragging ? 'z-50 scale-105' : 'z-10'}`}
                                     style={{ left: node.x, top: node.y }}
                                     onMouseDown={(e) => handleMouseDown(e, node.id)}
                                 >
-                                    {/* Selection Indicator Ring */}
-                                    {isSelected && (
-                                        <div className="absolute inset-0 -m-2 rounded-full border-2 border-primary animate-pulse w-16 h-16 pointer-events-none" />
-                                    )}
-
                                     <div
-                                        className={`w-12 h-12 rounded-full flex items-center justify-center border-2 bg-background transition-all duration-300 group-hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.5)]`}
+                                        className={`w-10 h-10 rounded-full flex items-center justify-center bg-background border shadow-sm transition-all duration-200`}
                                         style={{
                                             borderColor: isSelected ? '#3b82f6' : getNodeColor(node.status),
-                                            backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : undefined,
-                                            boxShadow: node.status === 'compromised'
-                                                ? '0 0 20px rgba(239, 68, 68, 0.6)'
-                                                : isDragging || isSelected
-                                                    ? '0 0 20px rgba(59, 130, 246, 0.5)'
-                                                    : undefined
+                                            color: isSelected ? '#3b82f6' : getNodeColor(node.status),
+                                            borderWidth: isSelected ? '2px' : '1px'
                                         }}
                                     >
-                                        <div style={{ color: getNodeColor(node.status) }}>
-                                            {getNodeIcon(node.type)}
-                                        </div>
+                                        {getNodeIcon(node.type)}
                                     </div>
-                                    <div className={`mt-2 bg-black/80 px-2 py-1 rounded text-xs font-mono text-white whitespace-nowrap border ${isSelected ? 'border-primary' : 'border-border'} pointer-events-none select-none`}>
+                                    <div className={`mt-2 bg-card px-2 py-1 rounded shadow-sm border text-[11px] font-medium text-foreground whitespace-nowrap ${isSelected ? 'border-blue-500 text-blue-600' : 'border-border'}`}>
                                         {node.label}
                                     </div>
                                     {node.status === 'compromised' && (
-                                        <ShieldAlert className="absolute -top-3 -right-3 h-5 w-5 text-destructive animate-bounce" />
+                                        <div className="absolute -top-1 -right-1 bg-white rounded-full">
+                                            <ShieldAlert className="h-4 w-4 text-destructive" />
+                                        </div>
                                     )}
                                 </div>
                             );

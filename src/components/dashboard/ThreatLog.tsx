@@ -97,7 +97,7 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
   }, [logs, filters]);
 
   return (
-    <Card variant="cyber" className="col-span-full">
+    <Card className="col-span-full border bg-card/80 backdrop-blur-sm">
       <CardHeader className="pb-4 space-y-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-foreground">

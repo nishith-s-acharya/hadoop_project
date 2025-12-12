@@ -178,9 +178,9 @@ const ResponseRules = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background cyber-grid relative">
+    <div className="min-h-screen bg-background relative">
       <div className="fixed inset-0 pointer-events-none scanlines opacity-30" />
-      <Header criticalAlerts={0} user={user} onSignOut={handleSignOut} onSimulate={() => {}} isSimulating={false} />
+      <Header criticalAlerts={0} user={user} onSignOut={handleSignOut} onSimulate={() => { }} isSimulating={false} />
 
       <main className="container mx-auto px-6 py-8 space-y-6">
         <div className="flex items-center justify-between">

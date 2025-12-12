@@ -11,10 +11,10 @@ interface StatsCardProps {
   variant?: 'default' | 'critical' | 'warning' | 'success';
 }
 
-export function StatsCard({ 
-  title, 
-  value, 
-  change, 
+export function StatsCard({
+  title,
+  value,
+  change,
   changeType = 'neutral',
   icon: Icon,
   variant = 'default'
@@ -34,10 +34,9 @@ export function StatsCard({
   };
 
   return (
-    <Card 
-      variant="cyber" 
+    <Card
       className={cn(
-        "relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px]",
+        "relative overflow-hidden transition-all duration-300 hover:translate-y-[-2px] border bg-card/80 backdrop-blur-sm",
         variantStyles[variant]
       )}
     >
@@ -46,8 +45,8 @@ export function StatsCard({
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground font-medium">{title}</p>
             <p className={cn(
-              "text-3xl font-bold font-mono tracking-tight",
-              variant === 'critical' && "text-destructive text-glow",
+              "text-3xl font-bold tracking-tight",
+              variant === 'critical' && "text-destructive",
               variant === 'warning' && "text-warning",
               variant === 'success' && "text-success",
               variant === 'default' && "text-foreground"
@@ -72,7 +71,7 @@ export function StatsCard({
             <Icon className="h-6 w-6" />
           </div>
         </div>
-        
+
         {/* Decorative corner accent */}
         <div className={cn(
           "absolute top-0 right-0 w-20 h-20 opacity-5",
