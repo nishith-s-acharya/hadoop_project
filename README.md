@@ -1,73 +1,57 @@
-# Welcome to your Lovable project
+# Threat Analysis & Visualization Platform
 
-## Project info
+A comprehensive Big Data Analytics project that processes security logs using **Hadoop MapReduce** and **Hive**, and visualizes threat intelligence on a modern React dashboard.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🏗️ Architecture
 
-## How can I edit this code?
+![Architecture Diagram](./architecture_diagram.png)
 
-There are several ways of editing your application.
+This project simulates a full data pipeline:
+1.  **Ingestion**: Logs are fetched from Supabase (or generated locally) and uploaded to HDFS.
+2.  **Processing**: A Hadoop Streaming MapReduce job (Python) processes the logs to aggregate threat data by country and attack type.
+3.  **Analysis**: Hive external tables queries are used for deeper SQL-based analysis.
+4.  **Visualization**: The results are consumed by a frontend dashboard built with React, Vite, and Recharts.
 
-**Use Lovable**
+## 🚀 Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+To run this project efficiently, ensure you have the following installed:
 
-Changes made via Lovable will be committed automatically to this repo.
+-   **Node.js** (v18+)
+-   **Java 17** (Required for Hadoop)
+-   **Hadoop** (v3.x) - Configured in Standalone or Pseudo-distributed mode.
+-   **Python 3**
 
-**Use your preferred IDE**
+## 🛠️ Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/nishith-s-acharya/hadoop_project.git
+    cd hadoop_project
+    ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-Follow these steps:
+## 💻 Usage
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 1. Run the Analysis Pipeline (Backend)
+This command handles everything: fetching logs, uploading to HDFS, running MapReduce, and generating JSON output.
+```bash
+npm run hadoop
+```
+*Note: Ensure your Hadoop environment is correctly set up.*
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 2. Start the Dashboard (Frontend)
+Launch the web interface to view the visualization of the analysis.
+```bash
 npm run dev
 ```
+Open **http://localhost:8080** in your browser.
 
-**Edit a file directly in GitHub**
+## 📂 Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+-   `/hadoop` - Contains the backend logic (Python Mappers/Reducers, Hive scripts).
+-   `/src` - React frontend code.
+-   `/hdfs_data` - Local storage for HDFS simulation.
