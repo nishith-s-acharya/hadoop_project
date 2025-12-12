@@ -67,12 +67,12 @@ function randomPort(): number {
   return Math.random() > 0.5 ? commonPorts[Math.floor(Math.random() * commonPorts.length)] : Math.floor(Math.random() * 65535);
 }
 
-function generateThreat() {
-  const threatType = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+function generateThreat(forcedType?: string) {
+  const threatType = forcedType || threatTypes[Math.floor(Math.random() * threatTypes.length)];
   const severity = severities[Math.floor(Math.random() * severities.length)];
   const location = locations[Math.floor(Math.random() * locations.length)];
   const protocol = protocols[Math.floor(Math.random() * protocols.length)];
-  const descList = descriptions[threatType];
+  const descList = descriptions[threatType] || descriptions['failed_login']; // Fallback
   const description = descList[Math.floor(Math.random() * descList.length)];
 
   return {
@@ -99,10 +99,12 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { count = 1 } = await req.json().catch(() => ({ count: 1 }));
-    const threatCount = Math.min(Math.max(1, count), 10);
+    const { count = 1, type = 'all' } = await req.json().catch(() => ({ count: 1, type: 'all' }));
+    const threatCount = Math.min(Math.max(1, count), 20); // increased limit to 20
 
-    const threats = Array.from({ length: threatCount }, generateThreat);
+    const threats = Array.from({ length: threatCount }, () =>
+      generateThreat(type !== 'all' ? type : undefined)
+    );
 
     const { data, error } = await supabase
       .from('threat_logs')

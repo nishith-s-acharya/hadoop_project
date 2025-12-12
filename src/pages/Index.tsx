@@ -6,15 +6,16 @@ import { ThreatLogViewer } from "@/components/dashboard/ThreatLog";
 import { GeoAttackMap } from "@/components/dashboard/GeoAttackMap";
 import { AttackTypeChart } from "@/components/dashboard/AttackTypeChart";
 import { SecuritySummaryWidget } from "@/components/dashboard/SecuritySummaryWidget";
+import { AIAssistant } from "@/components/dashboard/AIAssistant";
 import { useThreatLogs } from "@/hooks/useThreatLogs";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { 
-  ShieldAlert, 
-  Scan, 
-  KeyRound, 
-  Bug, 
+import {
+  ShieldAlert,
+  Scan,
+  KeyRound,
+  Bug,
   AlertTriangle,
   Activity
 } from "lucide-react";
@@ -24,15 +25,15 @@ const Index = () => {
   const { user, signOut, loading: authLoading } = useAuth();
   const [isSimulating, setIsSimulating] = useState(false);
 
-  const handleSimulate = async () => {
+  const handleSimulate = async (options = { count: 3, type: 'all' }) => {
     setIsSimulating(true);
     try {
       const { data, error } = await supabase.functions.invoke('simulate-threats', {
-        body: { count: 3 },
+        body: options,
       });
 
       if (error) throw error;
-      toast.success(`Generated ${data.count} simulated threats`);
+      toast.success(`Generated ${data.count} simulated threats (${options.type === 'all' ? 'Mixed' : options.type})`);
     } catch (error) {
       console.error('Simulation error:', error);
       toast.error('Failed to simulate threats');
@@ -64,15 +65,15 @@ const Index = () => {
     <div className="min-h-screen bg-background cyber-grid relative">
       {/* Scanline overlay */}
       <div className="fixed inset-0 pointer-events-none scanlines opacity-30" />
-      
-      <Header 
-        criticalAlerts={stats.criticalAlerts} 
+
+      <Header
+        criticalAlerts={stats.criticalAlerts}
         user={user}
         onSignOut={handleSignOut}
         onSimulate={handleSimulate}
         isSimulating={isSimulating}
       />
-      
+
       <main className="container mx-auto px-6 py-8 space-y-8">
         {/* Stats Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -135,8 +136,8 @@ const Index = () => {
         {/* Bottom Row */}
         <section className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-2">
-            <ThreatLogViewer 
-              logs={logs} 
+            <ThreatLogViewer
+              logs={logs}
               isAuthenticated={!!user}
               onRefetch={refetch}
             />
@@ -152,6 +153,9 @@ const Index = () => {
           </p>
         </footer>
       </main>
+
+      {/* Floating AI Assistant */}
+      <AIAssistant />
     </div>
   );
 };

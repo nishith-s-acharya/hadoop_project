@@ -6,12 +6,13 @@ import { ThreatLog } from "@/hooks/useThreatLogs";
 import { ThreatFiltersComponent, ThreatFilters } from "./ThreatFilters";
 import { ThreatManagement } from "./ThreatManagement";
 import { AlertNotificationButton } from "./AlertNotificationButton";
+import { ForensicDetailModal } from "./ForensicDetailModal";
 import { cn } from "@/lib/utils";
-import { 
-  ShieldAlert, 
-  Scan, 
-  KeyRound, 
-  Bug, 
+import {
+  ShieldAlert,
+  Scan,
+  KeyRound,
+  Bug,
   Zap,
   Globe
 } from "lucide-react";
@@ -46,6 +47,7 @@ const severityVariants = {
 } as const;
 
 export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogProps) {
+  const [selectedLog, setSelectedLog] = useState<ThreatLog | null>(null);
   const [filters, setFilters] = useState<ThreatFilters>({
     search: '',
     severity: [],
@@ -59,7 +61,7 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
       // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        const matchesSearch = 
+        const matchesSearch =
           log.source_ip.toLowerCase().includes(searchLower) ||
           (log.destination_ip?.toLowerCase().includes(searchLower)) ||
           log.description.toLowerCase().includes(searchLower) ||
@@ -129,12 +131,13 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
                   <div
                     key={log.id}
                     className={cn(
-                      "group relative flex items-start gap-4 p-4 rounded-lg border transition-all duration-300",
+                      "group relative flex items-start gap-4 p-4 rounded-lg border transition-all duration-300 cursor-pointer",
                       "bg-secondary/30 border-border/50 hover:border-primary/30 hover:bg-secondary/50",
                       "animate-fade-in",
                       log.status === 'resolved' && "opacity-60"
                     )}
                     style={{ animationDelay: `${index * 50}ms` }}
+                    onClick={() => setSelectedLog(log)}
                   >
                     <div className={cn(
                       "flex-shrink-0 p-2 rounded-lg",
@@ -145,7 +148,7 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
                     )}>
                       <Icon className="h-5 w-5" />
                     </div>
-                    
+
                     <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge variant={severityVariants[log.severity]} className="uppercase text-[10px]">
@@ -158,11 +161,11 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
                           {timestamp.toLocaleTimeString()}
                         </span>
                       </div>
-                      
+
                       <p className="text-sm text-foreground font-medium">
                         {log.description}
                       </p>
-                      
+
                       <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
                         <span className="flex items-center gap-1">
                           <span className="text-primary">SRC:</span> {log.source_ip}
@@ -194,7 +197,7 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Severity indicator line */}
                     <div className={cn(
                       "absolute left-0 top-0 bottom-0 w-1 rounded-l-lg",
@@ -207,9 +210,16 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
                 );
               })}
             </div>
+
           )}
         </ScrollArea>
       </CardContent>
-    </Card>
+
+      <ForensicDetailModal
+        threat={selectedLog}
+        open={!!selectedLog}
+        onOpenChange={(open) => !open && setSelectedLog(null)}
+      />
+    </Card >
   );
 }

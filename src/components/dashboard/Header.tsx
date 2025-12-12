@@ -1,26 +1,33 @@
-import { Shield, Bell, Settings, Activity, LogIn, LogOut, Zap, User, BarChart3, ShieldCheck } from "lucide-react";
+import { Shield, Bell, Settings, Activity, LogIn, LogOut, Zap, User, BarChart3, ShieldCheck, Network } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
 import { ClusterStatus } from "./ClusterStatus";
+import { toast } from "sonner";
+import { useState } from "react";
+import { SettingsDialog } from "./SettingsDialog";
+import { SimulationDialog } from "./SimulationDialog";
 
 interface HeaderProps {
   criticalAlerts: number;
   user?: { email?: string } | null;
   onSignOut?: () => void;
-  onSimulate?: () => void;
+  onSimulate?: (options?: { count: number; type: string }) => void;
   isSimulating?: boolean;
 }
 
 export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulating }: HeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showSettings, setShowSettings] = useState(false);
+  const [showSimulation, setShowSimulation] = useState(false);
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: Shield },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/network', label: 'Network Map', icon: Network },
     { path: '/response-rules', label: 'Response Rules', icon: ShieldCheck },
   ];
 
@@ -30,10 +37,10 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 md:gap-6">
             {/* Mobile Menu */}
-            <MobileNav 
-              user={user} 
-              onSignOut={onSignOut} 
-              onSimulate={onSimulate}
+            <MobileNav
+              user={user}
+              onSignOut={onSignOut}
+              onSimulate={() => setShowSimulation(true)}
               isSimulating={isSimulating}
             />
 
@@ -74,18 +81,18 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                 );
               })}
             </nav>
-            
+
             {/* Interactive Cluster Status */}
             <ClusterStatus />
           </div>
-          
+
           <div className="flex items-center gap-3">
             {/* Threat Simulator */}
             {user && onSimulate && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={onSimulate}
+                onClick={() => setShowSimulation(true)}
                 disabled={isSimulating}
                 className="hidden sm:flex font-mono text-xs gap-2 border-primary/50 text-primary hover:bg-primary/10"
               >
@@ -94,7 +101,14 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
               </Button>
             )}
 
-            <Button variant="ghost" size="icon" className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
+              onClick={() => toast.info(`${criticalAlerts} Critical Alerts requiring attention`, {
+                description: "Check the Threat Log for details"
+              })}
+            >
               <Bell className="h-5 w-5" />
               {criticalAlerts > 0 && (
                 <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
@@ -102,8 +116,12 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                 </span>
               )}
             </Button>
-            
-            <Button variant="ghost" size="icon">
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowSettings(true)}
+            >
               <Settings className="h-5 w-5" />
             </Button>
 
@@ -138,6 +156,15 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
           </div>
         </div>
       </div>
+      <SettingsDialog open={showSettings} onOpenChange={setShowSettings} />
+      {onSimulate && (
+        <SimulationDialog
+          open={showSimulation}
+          onOpenChange={setShowSimulation}
+          onSimulate={onSimulate}
+          isSimulating={!!isSimulating}
+        />
+      )}
     </header>
   );
 }

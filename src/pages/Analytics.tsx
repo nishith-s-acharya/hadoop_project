@@ -5,9 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import { TrendingUp, TrendingDown, Globe, Activity, Shield, Clock } from "lucide-react";
+import { TrendingUp, TrendingDown, Globe, Activity, Shield, Clock, FileDown, Printer } from "lucide-react";
 import { toast } from "sonner";
+import { AttackDistributionChart } from "@/components/analytics/AttackDistributionChart";
 
 interface ThreatTrend {
   date: string;
@@ -154,6 +156,54 @@ const Analytics = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    try {
+      if (trends.length === 0) {
+        toast.error("No data available to export");
+        return;
+      }
+
+      // Define CSV headers
+      const headers = ["Date", "Total Count", "Critical", "High", "Medium", "Low"];
+
+      // Map data to CSV rows
+      const rows = trends.map(t => [
+        t.date,
+        t.count,
+        t.critical,
+        t.high,
+        t.medium,
+        t.low
+      ]);
+
+      // Combine headers and rows
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+
+      // Create blob and download link
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `threat-report-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Report exported successfully");
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast.error("Failed to export report");
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background cyber-grid flex items-center justify-center">
@@ -164,24 +214,40 @@ const Analytics = () => {
 
   return (
     <div className="min-h-screen bg-background cyber-grid relative">
-      <div className="fixed inset-0 pointer-events-none scanlines opacity-30" />
-      <Header criticalAlerts={0} user={user} onSignOut={handleSignOut} onSimulate={() => {}} isSimulating={false} />
+      <div className="fixed inset-0 pointer-events-none scanlines opacity-30 print:hidden" />
+      <div className="print:hidden">
+        <Header criticalAlerts={0} user={user} onSignOut={handleSignOut} onSimulate={() => { }} isSimulating={false} />
+      </div>
 
-      <main className="container mx-auto px-6 py-8 space-y-6">
+      <main className="container mx-auto px-6 py-8 space-y-6 print:p-0 print:max-w-none">
         {/* Controls */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
           <h1 className="text-2xl font-mono font-bold text-primary">THREAT ANALYTICS</h1>
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-36 bg-card border-border">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="24h">Last 24 Hours</SelectItem>
-              <SelectItem value="7d">Last 7 Days</SelectItem>
-              <SelectItem value="30d">Last 30 Days</SelectItem>
-              <SelectItem value="90d">Last 90 Days</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-36 bg-card border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="24h">Last 24 Hours</SelectItem>
+                <SelectItem value="7d">Last 7 Days</SelectItem>
+                <SelectItem value="30d">Last 30 Days</SelectItem>
+                <SelectItem value="90d">Last 90 Days</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline" size="icon" onClick={handleExportCSV} title="Export CSV">
+              <FileDown className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={handlePrint} title="Print View">
+              <Printer className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Print Header */}
+        <div className="hidden print:block mb-8">
+          <h1 className="text-2xl font-bold text-black">Security Threat Report</h1>
+          <p className="text-sm text-gray-500">Generated on {new Date().toLocaleString()}</p>
         </div>
 
         {/* Quick Stats */}
@@ -266,36 +332,9 @@ const Analytics = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Attack Patterns */}
-          <Card className="bg-card/80 border-border backdrop-blur">
-            <CardHeader>
-              <CardTitle className="text-sm font-mono text-primary">ATTACK TYPE DISTRIBUTION</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={patterns}
-                      dataKey="count"
-                      nameKey="threat_type"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      label={({ threat_type, percentage }) => `${threat_type}: ${percentage}%`}
-                      labelLine={false}
-                    >
-                      {patterns.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="h-full">
+            <AttackDistributionChart data={patterns} />
+          </div>
 
           {/* Geographic Distribution */}
           <Card className="bg-card/80 border-border backdrop-blur">
