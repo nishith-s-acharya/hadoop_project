@@ -1,7 +1,8 @@
-import { Shield, Bell, Settings, Activity, LogIn, LogOut, Zap, User } from "lucide-react";
+import { Shield, Bell, Settings, Activity, LogIn, LogOut, Zap, User, BarChart3, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   criticalAlerts: number;
@@ -13,13 +14,20 @@ interface HeaderProps {
 
 export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulating }: HeaderProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItems = [
+    { path: '/', label: 'Dashboard', icon: Shield },
+    { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/response-rules', label: 'Response Rules', icon: ShieldCheck },
+  ];
 
   return (
     <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
               <div className="relative">
                 <Shield className="h-8 w-8 text-primary" />
                 <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-success animate-pulse" />
@@ -33,8 +41,31 @@ export function Header({ criticalAlerts, user, onSignOut, onSimulate, isSimulati
                 </p>
               </div>
             </div>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Button
+                    key={item.path}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate(item.path)}
+                    className={cn(
+                      "font-mono text-xs gap-2",
+                      isActive && "bg-primary/10 text-primary"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Button>
+                );
+              })}
+            </nav>
             
-            <Badge variant="info" className="hidden sm:flex items-center gap-1 font-mono">
+            <Badge variant="info" className="hidden lg:flex items-center gap-1 font-mono">
               <Activity className="h-3 w-3" />
               HADOOP CLUSTER: ONLINE
             </Badge>

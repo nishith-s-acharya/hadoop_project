@@ -8,11 +8,10 @@ import { Mail, Send, Loader2 } from "lucide-react";
 
 interface AlertNotificationButtonProps {
   threatId: string;
-  threatType: string;
   severity: string;
 }
 
-export const AlertNotificationButton = ({ threatId, threatType, severity }: AlertNotificationButtonProps) => {
+export const AlertNotificationButton = ({ threatId, severity }: AlertNotificationButtonProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -61,7 +60,7 @@ export const AlertNotificationButton = ({ threatId, threatType, severity }: Aler
         <div className="space-y-4 mt-4">
           <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-md">
             <p className="text-sm text-muted-foreground">
-              Sending alert for <strong className="text-foreground">{threatType}</strong> threat with{" "}
+              Sending alert for threat with{" "}
               <span className="text-destructive font-bold">CRITICAL</span> severity.
             </p>
           </div>

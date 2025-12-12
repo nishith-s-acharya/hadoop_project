@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ThreatLog } from "@/hooks/useThreatLogs";
 import { ThreatFiltersComponent, ThreatFilters } from "./ThreatFilters";
 import { ThreatManagement } from "./ThreatManagement";
+import { AlertNotificationButton } from "./AlertNotificationButton";
 import { cn } from "@/lib/utils";
 import { 
   ShieldAlert, 
@@ -185,8 +186,11 @@ export function ThreatLogViewer({ logs, isAuthenticated, onRefetch }: ThreatLogP
 
                       {/* Management controls for authenticated users */}
                       {isAuthenticated && onRefetch && (
-                        <div className="pt-2 border-t border-border/30 mt-2">
+                        <div className="pt-2 border-t border-border/30 mt-2 flex items-center gap-2">
                           <ThreatManagement threat={log} onUpdate={onRefetch} />
+                          {log.severity === 'critical' && log.status !== 'resolved' && (
+                            <AlertNotificationButton threatId={log.id} severity={log.severity} />
+                          )}
                         </div>
                       )}
                     </div>
